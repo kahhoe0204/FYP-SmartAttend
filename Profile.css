@@ -1,0 +1,99 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    overflow: hidden; /* Prevent scrolling */
+}
+
+.profile-container {
+    display: flex;
+    height: 100vh;
+}
+
+.profile-left {
+    padding-top: 25px;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: top;
+    background-color: #333;
+}
+
+.profile-image {
+    text-align: center;
+}
+
+.profile-image img {
+    width: 250px;
+    height: 250px;
+    border-radius: 50%;
+    margin-bottom: 15px;
+}
+
+.edit-profile-btn {
+    background-color: transparent;
+    color: #0066cc;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.profile-right {
+    flex: 2;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+}
+
+label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+input[type="text"],
+input[type="email"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.form-buttons {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.cancel-btn, .submit-btn {
+    padding: 15px 30px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    margin: 0 10px;
+}
+
+.cancel-btn {
+    background-color: #990000;
+    color: white;
+}
+
+.submit-btn {
+    background-color: #0044cc;
+    color: white;
+}
+
+header {
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+}
