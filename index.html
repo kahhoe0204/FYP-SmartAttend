@@ -14,10 +14,10 @@
         <div class="form-section">
             <div class="login-form">
                 <h2>Login</h2>
-                <form>
-                    <input type="text" placeholder="Student ID" required>
-                    <input type="password" placeholder="Password" required>
-                    <select required>
+                <form id="loginForm">
+                    <input type="email" id="email" placeholder="Email" required>
+                    <input type="password" id="password" placeholder="Password" required>
+                    <select id="institution" required>
                         <option value="">-- SELECT --</option>
                         <option value="help_university">HELP University</option>
                         <option value="help_academy">HELP Academy</option>
@@ -30,5 +30,23 @@
             </div>
         </div>
     </div>
+    <script type="module">
+        import { handleLogin } from './js/FirebaseConfig.js';
+
+        const loginForm = document.getElementById('loginForm');
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const userCredential = await handleLogin(email, password);
+                alert('Login successful! Redirecting to profile...');
+                window.location.href = 'Profile.html'; // Redirect to profile page after successful login
+            } catch (error) {
+                alert('Error logging in: ' + error.message);
+            }
+        });
+    </script>
 </body>
 </html>
