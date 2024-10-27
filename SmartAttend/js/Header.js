@@ -7,9 +7,9 @@ function loadNavBar(role) {
         navContent = `
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Class Attendance</a></li>
+                <li class="nav-item"><a class="nav-link" href="attendance.html">Class Attendance</a></li>
                 <li class="nav-item"><a class="nav-link" href="#">Submit MC</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Profile</a></li>
+                <li class="nav-item"><a class="nav-link" href="Profile.html">Profile</a></li>
                 <li class="nav-item"><button class="btn logout" onclick="logout()">Log Out</button></li>
             </ul>
         `;
@@ -41,6 +41,7 @@ let userRole = "student-logged-in";
 function logout() {
     userRole = "student-logged-out";
     loadNavBar(userRole);
+    window.location.href = "index.html";
 }
 
 loadNavBar(userRole);
