@@ -3,88 +3,156 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Student Attendance Dashboard</title>
     <link rel="stylesheet" href="css/Profile.css">
     <link rel="stylesheet" href="css/Header.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="container-fluid">
-                <!-- Logo Section -->
-                <a class="navbar-brand" href="#">
-                    <img src="Images/Logo.jpeg" alt="HELP University Logo" style="width:150px;">
-                </a>
-                
-                <!-- Hamburger Menu Button for Mobile View -->
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-    
-                <!-- Nav Links Section -->
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <div id="nav-links" class="ms-auto"></div>
-                </div>
-            </div>
-        </nav>
+    <!-- Header Section -->
+    <header class="navbar">
+        <div class="logo-section">
+            <img src="Images/Logo.jpeg" alt="HELP University Logo">
+        </div>
+        <nav id="nav-links" class="nav-links"></nav>
     </header>
 
-    <div class="container mt-5">
-        <div class="profile-container">
-            <div class="profile-left">
-                <div class="profile-image">
-                    <img src="Images/Profile.jpeg" alt="Profile Picture">
-                </div>
-                <button class="edit-profile-btn" onclick="toggleEdit()">Edit Profile</button>
-            </div>
-
-            <div class="profile-right">
-                <form>
-                    <label for="fullName">Full Name</label>
-                    <input type="text" id="fullName" name="fullName" placeholder="Enter your full name">
-
-                    <label for="studentId">Student ID</label>
-                    <input type="text" id="studentId" name="studentId" placeholder="Enter your student ID">
-
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" placeholder="Enter your email">
-
-                    <div class="form-buttons" style="display: none;" id="form-buttons">
-                        <button type="button" id="cancelBtn" class="cancel-btn" onclick="toggleEdit()">Cancel</button>
-                        <button type="submit" id="doneBtn" class="submit-btn">Done</button>
+    <main class="dashboard">
+        <!-- Profile Section -->
+        <section class="profile-section">
+            <div class="profile-card">
+                <div class="profile-left">
+                    <div class="profile-img-container">
+                        <img id="profile-img" src="Images/Profile.jpeg" alt="Student Profile Picture" class="profile-img">
+                        <label for="file-upload" class="upload-icon">
+                            <i class="fas fa-camera"></i>
+                        </label>
+                        <input type="file" id="file-upload" style="display: none;" accept="image/*">
                     </div>
-                </form>
+                    <button id="edit-profile-btn" class="edit-btn"><i class="fas fa-edit"></i> Edit</button>
+                </div>
+
+                <div class="profile-right">
+                    <div id="profile-info-display" class="profile-extra-details">
+                        <div class="profile-detail-item">
+                            <label>First Name:</label>
+                            <p id="display-first-name">Muhammad Danial</p>
+                        </div>
+                        <div class="profile-detail-item">
+                            <label>Surname:</label>
+                            <p id="display-surname">Syafiq</p>
+                        </div>
+                        <div class="profile-detail-item">
+                            <label>Email:</label>
+                            <p id="display-email">b1901935@helplive.edu.my</p>
+                        </div>
+                        <div class="profile-detail-item">
+                            <label>Phone:</label>
+                            <p id="display-phone">+60 16-529 7510</p>
+                        </div>
+                        <div class="profile-detail-item">
+                            <label>Department:</label>
+                            <p id="display-department">Information Technology</p>
+                        </div>
+                    </div>
+
+                    <form id="edit-profile-form" class="profile-extra-details" style="display: none;">
+                        <div class="profile-detail-item">
+                            <label for="first-name">First Name:</label>
+                            <input type="text" id="first-name" value="Muhammad Danial">
+                        </div>
+                        <div class="profile-detail-item">
+                            <label for="surname">Surname:</label>
+                            <input type="text" id="surname" value="Syafiq">
+                        </div>
+                        <div class="profile-detail-item">
+                            <label for="email">Email:</label>
+                            <input type="email" id="email" value="b1901935@helplive.edu.my">
+                        </div>
+                        <div class="profile-detail-item">
+                            <label for="phone">Phone:</label>
+                            <input type="tel" id="phone" value="+60 16-529 7510">
+                        </div>
+                        <div class="profile-detail-item">
+                            <label for="department">Department:</label>
+                            <input type="text" id="department" value="Information Technology">
+                        </div>
+                        <div class="form-buttons">
+                            <button type="button" class="btn-cancel" id="cancel-edit-btn">Cancel</button>
+                            <button type="submit" class="btn-submit">Save</button>
+                        </div>
+                    </form>
+                </div>
             </div>
-        </div>
-    </div>
+        </section>
 
-    <script>
-        function toggleEdit() {
-            const formButtons = document.getElementById('form-buttons');
-            const isVisible = formButtons.style.display === 'block';
+        <!-- Attendance Summary Section -->
+        <section class="attendance-summary">
+            <h3>Attendance Overview</h3>
+            <div class="cards-container horizontal">
+                <div class="info-card">
+                    <h4>Total Classes Attended</h4>
+                    <p><i class="fas fa-check-circle"></i> 28/40</p>
+                </div>
+                <div class="info-card">
+                    <h4>Absences</h4>
+                    <p><i class="fas fa-times-circle"></i> 5</p>
+                </div>
+                <div class="info-card">
+                    <h4>Medical Certificates Submitted</h4>
+                    <p><i class="fas fa-file-medical"></i> 3</p>
+                </div>
+                <div class="info-card">
+                    <h4>Upcoming Classes</h4>
+                    <p><i class="fas fa-calendar-alt"></i> 7</p>
+                </div>
+            </div>
+        </section>
 
-            // Toggle the visibility of the buttons
-            formButtons.style.display = isVisible ? 'none' : 'block';
-        }
-    </script>
+        <!-- Medical Certificate Submission Section -->
+        <section class="mc-submission">
+            <h3>Medical Certificate Submission</h3>
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>MC Submitted</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>September 25, 2023</td>
+                        <td><i class="fas fa-check-circle" style="color: #27ae60;"></i> Present</td>
+                        <td><i class="fas fa-file-medical" style="color: #0044cc;"></i> Yes</td>
+                        <td>Medical certificate submitted</td>
+                    </tr>
+                    <tr>
+                        <td>September 20, 2023</td>
+                        <td><i class="fas fa-times-circle" style="color: #e74c3c;"></i> Absent</td>
+                        <td><i class="fas fa-file-medical" style="color: #0044cc;"></i> Yes</td>
+                        <td>Medical certificate submitted</td>
+                    </tr>
+                    <tr>
+                        <td>September 18, 2023</td>
+                        <td><i class="fas fa-check-circle" style="color: #27ae60;"></i> Present</td>
+                        <td><i class="fas fa-times" style="color: #e74c3c;"></i> No</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>September 15, 2023</td>
+                        <td><i class="fas fa-times-circle" style="color: #e74c3c;"></i> Absent</td>
+                        <td><i class="fas fa-file-medical" style="color: #0044cc;"></i> Yes</td>
+                        <td>Medical certificate submitted</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
 
-    <script>
-        document.querySelector('.cancel-btn').addEventListener('click', function() {
-            window.location.reload();
-        });
-    </script>
-
-    <script>
-        // Event listener for Done button (submission)
-        document.querySelector('.submit-btn').addEventListener('click', function(event) {
-            event.preventDefault();
-            alert('Profile updated successfully!');
-        });
-    </script>
-
-
-    <script src="js/Header.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Import Firebase and Profile.js -->
+    <script type="module" src="./js/FirebaseConfig.js"></script>
+    <script type="module" src="./js/Profile.js"></script>
 </body>
 </html>
