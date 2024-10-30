@@ -3,7 +3,7 @@
 // Import Firebase SDK
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-auth.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-firestore.js"; // Import Firestore
+import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-firestore.js"; // Import Firestore functions
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -17,8 +17,11 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const auth = getAuth();
+const auth = getAuth(); // Get Firebase Authentication
 const db = getFirestore(app);  // Initialize Firestore
+
+// Export the auth and db objects
+export { auth, db }; // Export auth and Firestore database for use in other parts of the application
 
 // Function to handle user sign-up
 export const handleSignUp = (email, password) => {
@@ -35,5 +38,23 @@ export const sendPasswordReset = (email) => {
     return sendPasswordResetEmail(auth, email);
 }
 
-// Export Firestore database for use in other parts of the application
-export { db };
+// Function to create user document in Firestore
+export const createUserInFirestore = async (uid, fullName, studentId) => {
+    try {
+        await setDoc(doc(db, "Students", uid), {
+            fullName: fullName,
+            studentID: studentId,
+            email: auth.currentUser.email,
+            attendance: {
+                absences: 0,
+                medicalCertificateSubmitted: 0,
+                totalClassesAttended: 0,
+                upcomingClasses: 0
+            },
+            department: "Information Technology"
+        });
+        console.log("User document successfully written!");
+    } catch (error) {
+        console.error("Error writing document: ", error);
+    }
+}

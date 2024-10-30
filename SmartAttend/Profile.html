@@ -7,6 +7,43 @@
     <link rel="stylesheet" href="css/Profile.css">
     <link rel="stylesheet" href="css/Header.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Additional CSS for the modal */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0, 0, 0); /* Fallback color */
+            background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto; /* 15% from the top and centered */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%; /* Could be more or less, depending on screen size */
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
     <!-- Header Section -->
@@ -29,7 +66,7 @@
                         </label>
                         <input type="file" id="file-upload" style="display: none;" accept="image/*">
                     </div>
-                    <button id="edit-profile-btn" class="edit-btn"><i class="fas fa-edit"></i> Edit</button>
+                    <button id="edit-modal-btn" class="edit-btn"><i class="fas fa-edit"></i> Edit</button>
                 </div>
 
                 <div class="profile-right">
@@ -55,56 +92,29 @@
                             <p id="display-department">Information Technology</p>
                         </div>
                     </div>
-
-                    <form id="edit-profile-form" class="profile-extra-details" style="display: none;">
-                        <div class="profile-detail-item">
-                            <label for="first-name">First Name:</label>
-                            <input type="text" id="first-name" value="Muhammad Danial">
-                        </div>
-                        <div class="profile-detail-item">
-                            <label for="surname">Surname:</label>
-                            <input type="text" id="surname" value="Syafiq">
-                        </div>
-                        <div class="profile-detail-item">
-                            <label for="email">Email:</label>
-                            <input type="email" id="email" value="b1901935@helplive.edu.my">
-                        </div>
-                        <div class="profile-detail-item">
-                            <label for="phone">Phone:</label>
-                            <input type="tel" id="phone" value="+60 16-529 7510">
-                        </div>
-                        <div class="profile-detail-item">
-                            <label for="department">Department:</label>
-                            <input type="text" id="department" value="Information Technology">
-                        </div>
-                        <div class="form-buttons">
-                            <button type="button" class="btn-cancel" id="cancel-edit-btn">Cancel</button>
-                            <button type="submit" class="btn-submit">Save</button>
-                        </div>
-                    </form>
                 </div>
             </div>
         </section>
 
-        <!-- Attendance Summary Section -->
+        <!-- Attendance Overview -->
         <section class="attendance-summary">
             <h3>Attendance Overview</h3>
             <div class="cards-container horizontal">
                 <div class="info-card">
                     <h4>Total Classes Attended</h4>
-                    <p><i class="fas fa-check-circle"></i> 28/40</p>
+                    <p id="total-classes-attended"><i class="fas fa-check-circle"></i> 28/40</p>
                 </div>
                 <div class="info-card">
                     <h4>Absences</h4>
-                    <p><i class="fas fa-times-circle"></i> 5</p>
+                    <p id="absences"><i class="fas fa-times-circle"></i> 5</p>
                 </div>
                 <div class="info-card">
                     <h4>Medical Certificates Submitted</h4>
-                    <p><i class="fas fa-file-medical"></i> 3</p>
+                    <p id="mc-submitted"><i class="fas fa-file-medical"></i> 3</p>
                 </div>
                 <div class="info-card">
                     <h4>Upcoming Classes</h4>
-                    <p><i class="fas fa-calendar-alt"></i> 7</p>
+                    <p id="upcoming-classes"><i class="fas fa-calendar-alt"></i> 7</p>
                 </div>
             </div>
         </section>
@@ -134,25 +144,91 @@
                         <td><i class="fas fa-file-medical" style="color: #0044cc;"></i> Yes</td>
                         <td>Medical certificate submitted</td>
                     </tr>
-                    <tr>
-                        <td>September 18, 2023</td>
-                        <td><i class="fas fa-check-circle" style="color: #27ae60;"></i> Present</td>
-                        <td><i class="fas fa-times" style="color: #e74c3c;"></i> No</td>
-                        <td>-</td>
-                    </tr>
-                    <tr>
-                        <td>September 15, 2023</td>
-                        <td><i class="fas fa-times-circle" style="color: #e74c3c;"></i> Absent</td>
-                        <td><i class="fas fa-file-medical" style="color: #0044cc;"></i> Yes</td>
-                        <td>Medical certificate submitted</td>
-                    </tr>
                 </tbody>
             </table>
         </section>
     </main>
 
-    <!-- Import Firebase and Profile.js -->
-    <script type="module" src="./js/FirebaseConfig.js"></script>
-    <script type="module" src="./js/Profile.js"></script>
+    <!-- Modal for editing profile -->
+    <div id="edit-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <form id="edit-profile-form" class="profile-extra-details">
+                <div class="profile-detail-item">
+                    <label for="first-name">First Name:</label>
+                    <input type="text" id="first-name" value="Muhammad Danial">
+                </div>
+                <div class="profile-detail-item">
+                    <label for="surname">Surname:</label>
+                    <input type="text" id="surname" value="Syafiq">
+                </div>
+                <div class="profile-detail-item">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" value="b1901935@helplive.edu.my">
+                </div>
+                <div class="profile-detail-item">
+                    <label for="phone">Phone:</label>
+                    <input type="tel" id="phone" value="+60 16-529 7510">
+                </div>
+                <div class="profile-detail-item">
+                    <label for="department">Department:</label>
+                    <input type="text" id="department" value="Information Technology">
+                </div>
+                <div class="form-buttons">
+                    <button type="button" class="btn-cancel" id="cancel-edit-btn">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <button type="submit" class="btn-submit">
+                        <i class="fas fa-check"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script type="module" src="js/FirebaseConfig.js"></script>
+    <script type="module" src="js/Profile.js"></script>
+    <script type="module" src="js/Header.js"></script>
+    <script>
+        // Select modal and buttons
+        const editModal = document.getElementById("edit-modal");
+        const editModalBtn = document.getElementById("edit-modal-btn");
+        const closeModal = document.querySelector(".close");
+        const cancelEditBtn = document.getElementById("cancel-edit-btn");
+        const editProfileForm = document.getElementById("edit-profile-form");
+
+        // Function to open the modal
+        function openModal() {
+            editModal.style.display = "block";
+        }
+
+        // Function to close the modal
+        function closeModalFunc() {
+            editModal.style.display = "none";
+        }
+
+        // Event listener to open modal when edit button is clicked
+        editModalBtn.addEventListener("click", openModal);
+
+        // Event listener to close modal when close button is clicked
+        closeModal.addEventListener("click", closeModalFunc);
+
+        // Event listener to close modal when cancel button is clicked
+        cancelEditBtn.addEventListener("click", closeModalFunc);
+
+        // Event listener to handle form submission
+        editProfileForm.addEventListener("submit", (event) => {
+            event.preventDefault(); // Prevent the form from submitting the default way
+            // Update profile information based on form input
+            document.getElementById("display-first-name").textContent = document.getElementById("first-name").value;
+            document.getElementById("display-surname").textContent = document.getElementById("surname").value;
+            document.getElementById("display-email").textContent = document.getElementById("email").value;
+            document.getElementById("display-phone").textContent = document.getElementById("phone").value;
+            document.getElementById("display-department").textContent = document.getElementById("department").value;
+
+            // Close the modal after submitting
+            closeModalFunc();
+        });
+    </script>
 </body>
 </html>
