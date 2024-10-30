@@ -8,26 +8,25 @@
     <link rel="stylesheet" href="css/Header.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* Additional CSS for the modal */
         .modal {
-            display: none; /* Hidden by default */
-            position: fixed; /* Stay in place */
-            z-index: 1; /* Sit on top */
+            display: none;
+            position: fixed;
+            z-index: 1;
             left: 0;
             top: 0;
-            width: 100%; /* Full width */
-            height: 100%; /* Full height */
-            overflow: auto; /* Enable scroll if needed */
-            background-color: rgb(0, 0, 0); /* Fallback color */
-            background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0, 0, 0);
+            background-color: rgba(0, 0, 0, 0.4);
         }
 
         .modal-content {
             background-color: #fefefe;
-            margin: 15% auto; /* 15% from the top and centered */
+            margin: 15% auto;
             padding: 20px;
             border: 1px solid #888;
-            width: 80%; /* Could be more or less, depending on screen size */
+            width: 80%;
         }
 
         .close {
@@ -72,12 +71,8 @@
                 <div class="profile-right">
                     <div id="profile-info-display" class="profile-extra-details">
                         <div class="profile-detail-item">
-                            <label>First Name:</label>
-                            <p id="display-first-name">Muhammad Danial</p>
-                        </div>
-                        <div class="profile-detail-item">
-                            <label>Surname:</label>
-                            <p id="display-surname">Syafiq</p>
+                            <label>Full Name:</label>
+                            <p id="display-first-name">Muhammad Danial Syafiq bin Mohammad Zahidi</p>
                         </div>
                         <div class="profile-detail-item">
                             <label>Email:</label>
@@ -155,12 +150,8 @@
             <span class="close">&times;</span>
             <form id="edit-profile-form" class="profile-extra-details">
                 <div class="profile-detail-item">
-                    <label for="first-name">First Name:</label>
-                    <input type="text" id="first-name" value="Muhammad Danial">
-                </div>
-                <div class="profile-detail-item">
-                    <label for="surname">Surname:</label>
-                    <input type="text" id="surname" value="Syafiq">
+                    <label for="full-name">First Name:</label>
+                    <input type="text" id="full-name" value="Muhammad Danial bin Mohammad Zahidi">
                 </div>
                 <div class="profile-detail-item">
                     <label for="email">Email:</label>
@@ -220,8 +211,7 @@
         editProfileForm.addEventListener("submit", (event) => {
             event.preventDefault(); // Prevent the form from submitting the default way
             // Update profile information based on form input
-            document.getElementById("display-first-name").textContent = document.getElementById("first-name").value;
-            document.getElementById("display-surname").textContent = document.getElementById("surname").value;
+            document.getElementById("display-first-name").textContent = document.getElementById("full-name").value;
             document.getElementById("display-email").textContent = document.getElementById("email").value;
             document.getElementById("display-phone").textContent = document.getElementById("phone").value;
             document.getElementById("display-department").textContent = document.getElementById("department").value;
