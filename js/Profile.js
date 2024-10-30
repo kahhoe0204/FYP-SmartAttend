@@ -1,5 +1,4 @@
-import { db } from './FirebaseConfig.js';
-import { doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-firestore.js";
+import { db, doc, getDoc, updateDoc } from './FirebaseConfig.js';
 
 const userRef = doc(db, 'Students', userId);
 

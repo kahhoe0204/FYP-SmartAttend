@@ -3,7 +3,7 @@
 // Import Firebase SDK
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-auth.js";
-import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-firestore.js"; // Import Firestore functions
+import { getFirestore, doc, setDoc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-firestore.js"; // Import Firestore functions
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -21,7 +21,7 @@ const auth = getAuth(); // Get Firebase Authentication
 const db = getFirestore(app);  // Initialize Firestore
 
 // Export the auth and db objects
-export { auth, db }; // Export auth and Firestore database for use in other parts of the application
+export { auth, db, doc, setDoc, getDoc, updateDoc }; // Export for use in other parts of the application
 
 // Function to handle user sign-up
 export const handleSignUp = (email, password) => {
