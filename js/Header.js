@@ -66,6 +66,7 @@ function loadNavBar(userRole) {
             <a href="#">Home</a>
             <a href="#">Class Attendance</a>
             <a href="#">Submit MC</a>
+            <a href="subjectEnrol.html">Subject Enrolment</a>
             <a href="Profile.html">Profile</a>
             <button class="btn logout">Log Out</button>
         `;
@@ -81,7 +82,7 @@ function loadNavBar(userRole) {
         console.log('Loading navbar for logged-out user');
         navContent = `
             <a href="#">Home</a>
-            <button class="btn login-btn" onclick="window.location.href='Login.html'">Login</button>
+            <button class="btn login-btn" onclick="window.location.href='index.html'">Login</button>
             <button class="btn signup-btn" onclick="window.location.href='Signup.html'">Sign Up</button>
         `;
     }

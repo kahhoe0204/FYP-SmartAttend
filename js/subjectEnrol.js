@@ -1,3 +1,17 @@
+import { db, doc, updateDoc, getDoc, auth } from './FirebaseConfig.js';
+
+let uid; 
+
+auth.onAuthStateChanged((authUser) => {
+    if (authUser) {
+        uid = authUser.uid;
+        console.log('User logged in with userID:', uid);
+        fetchEnrolledSubjects(uid); 
+    } else {
+        console.log('No user is currently logged in');
+    }
+});
+
 const subjects = {
     "BIT": {
         "1": [
@@ -14,7 +28,7 @@ const subjects = {
             { code: "BIT200", name: "Technopreneurship and Innovation" },
             { code: "BIT201", name: "Systems Architecture and Design" },
             { code: "BIT206", name: "User Experience Design" },
-            { code: "BIT210", name: "Advanced Web development" },
+            { code: "BIT210", name: "Advanced Web Development" },
             { code: "BIT212", name: "Cloud Computing" },
             { code: "BIT216", name: "Software Engineering Principles" },
             { code: "BIT217", name: "Internet of Things" },
@@ -61,25 +75,23 @@ const subjects = {
     }
 };
 
+// Filter function for the dropdowns
 function filterSubjects() {
     const department = document.getElementById('department').value;
     const year = document.getElementById('year').value;
     const yearSelect = document.getElementById('year');
     const subjectSelect = document.getElementById('subject');
 
-    // Reset the subject dropdown
     subjectSelect.innerHTML = '<option value="">Select Subject</option>';
     subjectSelect.disabled = true;
 
-    // Enable or disable year dropdown based on department selection
     if (department) {
         yearSelect.disabled = false;
     } else {
         yearSelect.disabled = true;
-        yearSelect.value = ""; // Reset the year dropdown
+        yearSelect.value = "";
     }
 
-    // Populate and enable subject dropdown if both department and year are selected
     if (department && year && subjects[department] && subjects[department][year]) {
         subjects[department][year].forEach(subject => {
             const option = document.createElement('option');
@@ -90,3 +102,76 @@ function filterSubjects() {
         subjectSelect.disabled = false;
     }
 }
+
+window.filterSubjects = filterSubjects;
+
+// Function to fetch and display enrolled subjects for the logged-in user
+async function fetchEnrolledSubjects() {
+    if (!uid) {
+        console.log("User is not logged in. Cannot fetch subjects.");
+        return; // Exit if not logged in
+    }
+
+    const studentDocRef = doc(db, "Students", uid);
+
+    try {
+        const docSnapshot = await getDoc(studentDocRef);
+        if (docSnapshot.exists()) {
+            const enrolledSubjects = docSnapshot.data().enrolledSubjects;
+            const tbody = document.querySelector('.enrollment-table tbody');
+            tbody.innerHTML = ''; // Clear any existing rows
+
+            // Populate table with enrolled subjects
+            for (const [code, { name, status }] of Object.entries(enrolledSubjects)) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${code}</td>
+                    <td>${name}</td>
+                    <td>${status}</td>
+                `;
+                tbody.appendChild(row);
+            }
+        } else {
+            console.log("No such document!");
+        }
+    } catch (error) {
+        console.error("Error fetching document: ", error);
+    }
+}
+
+// Function to handle form submission and add enrollment data to the "enrolledSubjects" map
+async function submitEnrollment(event) {
+    event.preventDefault();
+
+    const department = document.getElementById('department').value;
+    const year = document.getElementById('year').value;
+    const subjectSelect = document.getElementById('subject');
+    const selectedSubjectCode = subjectSelect.value;
+    const selectedSubjectName = subjectSelect.options[subjectSelect.selectedIndex].text;
+
+    if (department && year && selectedSubjectCode && selectedSubjectName && uid) {
+        const studentDocRef = doc(db, "Students", uid);
+
+        try {
+            // Add or update the enrolled subject in the "enrolledSubjects" map with Status
+            await updateDoc(studentDocRef, {
+                [`enrolledSubjects.${selectedSubjectCode}`]: {
+                    name: selectedSubjectName,
+                    status: "Submitted for approval"
+                }
+            });
+
+            alert("Enrollment successful!");
+
+            // Fetch and update the enrolled subjects table after successful enrollment
+            fetchEnrolledSubjects();
+        } catch (error) {
+            console.error("Error updating document: ", error);
+            alert("Failed to enroll. Please try again.");
+        }
+    } else {
+        alert("Please fill in all fields before submitting.");
+    }
+}
+
+document.querySelector('.enrollment-form').addEventListener('submit', submitEnrollment);
