@@ -93,12 +93,12 @@ const editProfileForm = document.getElementById("edit-profile-form");
 
 // Function to open the modal
 function openModal() {
-    editModal.style.display = "block";
+    editModal.style.display = "flex"; // Set display to 'flex' to ensure centering
 }
 
 // Function to close the modal
 function closeModalFunc() {
-    editModal.style.display = "none";
+    editModal.style.display = "none"; // Hide the modal when closed
 }
 
 // Event listener to open modal when edit button is clicked

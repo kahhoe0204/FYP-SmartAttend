@@ -125,30 +125,46 @@
     </main>
 
     <!-- Modal for editing profile -->
-    <div id="edit-modal" class="modal" style="display: none;">
+    <div id="edit-modal" class="modal">
         <div class="modal-content">
+            <!-- Close Button -->
             <span class="close">&times;</span>
+
+            <!-- Profile Edit Form -->
             <form id="edit-profile-form" class="profile-extra-details">
+
+                <!-- Full Name Field -->
                 <div class="profile-detail-item">
-                    <label for="full-name">First Name:</label>
-                    <input type="text" id="full-name" value="Muhammad Danial bin Mohammad Zahidi">
+                    <label for="full-name">Full Name:</label>
+                    <input type="text" id="full-name">
                 </div>
+
+                <!-- Email Field -->
                 <div class="profile-detail-item">
                     <label for="email">Email:</label>
-                    <input type="email" id="email" value="b1901935@helplive.edu.my">
+                    <input type="email" id="email">
                 </div>
+
+                <!-- Phone Field -->
                 <div class="profile-detail-item">
                     <label for="phone">Phone:</label>
-                    <input type="tel" id="phone" value="+60 16-529 7510">
+                    <input type="tel" id="phone">
                 </div>
+
+                <!-- Department Field -->
                 <div class="profile-detail-item">
                     <label for="department">Department:</label>
-                    <input type="text" id="department" value="Information Technology">
+                    <input type="text" id="department">
                 </div>
+
+                <!-- Form Buttons (Cancel and Submit) -->
                 <div class="form-buttons">
+                    <!-- Cancel Button -->
                     <button type="button" class="btn-cancel" id="cancel-edit-btn">
                         <i class="fas fa-times"></i>
                     </button>
+                    
+                    <!-- Submit Button -->
                     <button type="submit" class="btn-submit">
                         <i class="fas fa-check"></i>
                     </button>
@@ -156,6 +172,7 @@
             </form>
         </div>
     </div>
+
 
     <script type="module" src="js/FirebaseConfig.js"></script>
     <script type="module" src="js/Profile.js"></script>
