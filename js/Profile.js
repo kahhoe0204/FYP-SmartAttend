@@ -35,7 +35,7 @@ function displayProfileData(data) {
     console.log(data);
     // Populate the modal form fields for editing
     document.querySelector('#full-name').value = data.fullName;
-    document.querySelector('#student-id').value = data.studentID;
+    document.querySelector('#student-id').value = data.studentID; // Correct ID usage here
     document.querySelector('#email').value = data.email;
     document.querySelector('#department').value = data.department;
     document.querySelector('#phone').value = data.phone;
@@ -118,14 +118,12 @@ editProfileForm.addEventListener("submit", async (event) => {
 
     // Get updated values from the form
     const updatedFullName = document.getElementById("full-name").value;
-    const updatedStudentID = document.getElementById("studentID").value;
     const updatedEmail = document.getElementById("email").value;
     const updatedPhone = document.getElementById("phone").value;
     const updatedDepartment = document.getElementById("department").value;
 
     // Update the profile information displayed on the page
     document.getElementById("display-full-name").textContent = updatedFullName;
-    document.getElementById("display-student-id").textContent = updatedStudentID;
     document.getElementById("display-email").textContent = updatedEmail;
     document.getElementById("display-phone").textContent = updatedPhone;
     document.getElementById("display-department").textContent = updatedDepartment;
@@ -137,8 +135,7 @@ editProfileForm.addEventListener("submit", async (event) => {
             fullName: updatedFullName,
             email: updatedEmail,
             phone: updatedPhone,
-            department: updatedDepartment,
-            studentID: updatedStudentID
+            department: updatedDepartment
         });
         console.log('Document successfully updated!');
     } catch (error) {
@@ -148,3 +145,4 @@ editProfileForm.addEventListener("submit", async (event) => {
     // Close the modal after submitting
     closeModalFunc();
 });
+
