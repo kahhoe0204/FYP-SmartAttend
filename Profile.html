@@ -55,6 +55,10 @@
                             <p id="display-full-name"></p>
                         </div>
                         <div class="profile-detail-item">
+                            <label>Student ID:</label>
+                            <p id="display-student-id"></p>
+                        </div>
+                        <div class="profile-detail-item">
                             <label>Email:</label>
                             <p id="display-email"></p>
                         </div>
@@ -139,6 +143,12 @@
                     <input type="text" id="full-name">
                 </div>
 
+                <!-- Student ID Field -->
+                <div class="profile-detail-item">
+                    <label for="student-id">Student ID:</label>
+                    <input type="text" id="student-id" disabled> <!-- Student ID should not be editable -->
+                </div>
+
                 <!-- Email Field -->
                 <div class="profile-detail-item">
                     <label for="email">Email:</label>
@@ -211,6 +221,7 @@
             event.preventDefault(); // Prevent the form from submitting the default way
             // Update profile information based on form input
             document.getElementById("display-full-name").textContent = document.getElementById("full-name").value;
+            document.getElementById("display-student-id").textContent = document.getElementById("student-id").value;
             document.getElementById("display-email").textContent = document.getElementById("email").value;
             document.getElementById("display-phone").textContent = document.getElementById("phone").value;
             document.getElementById("display-department").textContent = document.getElementById("department").value;
