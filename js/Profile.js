@@ -1,6 +1,7 @@
-import { auth, db, doc, getDoc, updateDoc } from './FirebaseConfig.js';
+import { auth, db, doc, getDoc, updateDoc, storage, ref, deleteObject, uploadBytes, getDownloadURL } from './FirebaseConfig.js';
 
-let uid; 
+let uid;
+
 auth.onAuthStateChanged((authUser) => {
     if (authUser) {
         uid = authUser.uid;
@@ -14,65 +15,101 @@ auth.onAuthStateChanged((authUser) => {
 // Function to fetch profile data from Firestore
 async function fetchProfileData(userRef) {
     try {
-        const studentDocRef = doc(db, "Students", uid);
+        const studentDocRef = doc(db, "Students", userRef);
         const docSnap = await getDoc(studentDocRef);
         if (docSnap.exists()) {
             const userData = docSnap.data();
             displayProfileData(userData);
-            displayAttendanceOverview(userData); // Fetch and display attendance overview
+            displayAttendanceOverview(userData);
         } else {
             console.log('No such document!');
-            return null;
         }
     } catch (error) {
         console.log('Error fetching document:', error);
-        return null;
     }
 }
 
-// Function to display profile data on the page
+// Profile Image Update with File Size Limit
+const fileInput = document.getElementById('file-upload');
+const profileImg = document.getElementById('profile-img');
+
+fileInput.addEventListener('change', async (event) => {
+    const file = event.target.files[0];
+    const maxSize = 2 * 1024 * 1024;
+
+    // Check file size
+    if (file && file.size <= maxSize) {
+        const studentDocRef = doc(db, "Students", uid);
+        const docSnap = await getDoc(studentDocRef);
+
+        if (docSnap.exists()) {
+            const currentData = docSnap.data();
+            const oldImageUrl = currentData.profileImageURL;
+
+            // Delete old image if it exists
+            if (oldImageUrl) {
+                const oldImageRef = ref(storage, oldImageUrl);
+                await deleteObject(oldImageRef).catch((error) => console.error("Error deleting old image:", error));
+            }
+
+            // Upload new image
+            const newImageRef = ref(storage, `profileImages/${uid}-${Date.now()}`);
+            await uploadBytes(newImageRef, file);
+
+            // Update Firestore with new image URL
+            const newImageUrl = await getDownloadURL(newImageRef);
+            await updateDoc(studentDocRef, { profileImageURL: newImageUrl });
+
+            // Update profile image on the page
+            profileImg.src = newImageUrl;
+        }
+    } else {
+        alert("Please upload an image smaller than 2 MB.");
+    }
+});
+
+// Display Profile Data
 function displayProfileData(data) {
-    console.log(data);
-    // Populate the modal form fields for editing
+    // Populate form fields
     document.querySelector('#full-name').value = data.fullName;
-    document.querySelector('#student-id').value = data.studentID; // Correct ID usage here
+    document.querySelector('#student-id').value = data.studentID;
     document.querySelector('#email').value = data.email;
     document.querySelector('#department').value = data.department;
     document.querySelector('#phone').value = data.phone;
 
-    // Display the profile data in the profile section
+    // Display in profile section
     document.querySelector('#display-full-name').textContent = data.fullName;
     document.querySelector('#display-student-id').textContent = data.studentID;
     document.querySelector('#display-email').textContent = data.email;
     document.querySelector('#display-department').textContent = data.department;
     document.querySelector('#display-phone').textContent = data.phone;
 
-    // If there's an image, display the profile image (keep using 'profileImageURL')
+    // Profile image handling
     if (data.profileImageURL) {
-        document.querySelector('#profile-img').src = data.profileImageURL;
+        profileImg.src = data.profileImageURL;
     } else {
-        document.querySelector('#profile-img').src = 'default-profile.png'; // Fallback if no image is provided
+        profileImg.src = 'Images/Profile.jpeg'; // Default image
     }
 }
 
-// Function to fetch and display attendance overview from Firestore
+// Display Attendance Overview
 function displayAttendanceOverview(data) {
-    const attendance = data.attendance; // Fetch attendance data from Firestore
+    const attendance = data.attendance;
 
-    // Update the existing fields in the attendance overview
+    // Update fields in attendance overview
     document.querySelector('#total-classes-attended').innerHTML = `<i class="fas fa-check-circle"></i> ${attendance.totalClassesAttended}/40`;
     document.querySelector('#absences').innerHTML = `<i class="fas fa-times-circle"></i> ${attendance.absences}`;
     document.querySelector('#mc-submitted').innerHTML = `<i class="fas fa-file-medical"></i> ${attendance.medicalCertificateSubmitted}`;
     document.querySelector('#upcoming-classes').innerHTML = `<i class="fas fa-calendar-alt"></i> ${attendance.upcomingClasses}`;
 
-    // Display medical certificate submission table
+    // Medical certificate submission table
     displayMedicalCertificates(data.medicalCertificates);
 }
 
-// Function to display medical certificates
+// Display Medical Certificates
 function displayMedicalCertificates(certificates) {
     const mcTableBody = document.querySelector('.mc-submission .styled-table tbody');
-    mcTableBody.innerHTML = ''; // Clear previous rows
+    mcTableBody.innerHTML = '';
 
     certificates.forEach(cert => {
         const row = document.createElement('tr');
@@ -86,49 +123,34 @@ function displayMedicalCertificates(certificates) {
     });
 }
 
-// Select modal and buttons
+// Modal controls
 const editModal = document.getElementById("edit-modal");
 const editModalBtn = document.getElementById("edit-modal-btn");
 const closeModal = document.querySelector(".close");
 const cancelEditBtn = document.getElementById("cancel-edit-btn");
 const editProfileForm = document.getElementById("edit-profile-form");
 
-// Function to open the modal
-function openModal() {
-    editModal.style.display = "flex"; // Set display to 'flex' to ensure centering
-}
+editModalBtn.addEventListener("click", () => editModal.style.display = "flex");
+closeModal.addEventListener("click", () => editModal.style.display = "none");
+cancelEditBtn.addEventListener("click", () => editModal.style.display = "none");
 
-// Function to close the modal
-function closeModalFunc() {
-    editModal.style.display = "none"; // Hide the modal when closed
-}
-
-// Event listener to open modal when edit button is clicked
-editModalBtn.addEventListener("click", openModal);
-
-// Event listener to close modal when close button is clicked
-closeModal.addEventListener("click", closeModalFunc);
-
-// Event listener to close modal when cancel button is clicked
-cancelEditBtn.addEventListener("click", closeModalFunc);
-
-// Event listener to handle form submission and Firestore update
+// Form Submission
 editProfileForm.addEventListener("submit", async (event) => {
-    event.preventDefault(); // Prevent the form from submitting the default way
+    event.preventDefault();
 
-    // Get updated values from the form
+    // Fetch updated values
     const updatedFullName = document.getElementById("full-name").value;
     const updatedEmail = document.getElementById("email").value;
     const updatedPhone = document.getElementById("phone").value;
     const updatedDepartment = document.getElementById("department").value;
 
-    // Update the profile information displayed on the page
+    // Update displayed data
     document.getElementById("display-full-name").textContent = updatedFullName;
     document.getElementById("display-email").textContent = updatedEmail;
     document.getElementById("display-phone").textContent = updatedPhone;
     document.getElementById("display-department").textContent = updatedDepartment;
 
-    // Update the Firestore document with the new data
+    // Update Firestore
     const studentDocRef = doc(db, "Students", uid);
     try {
         await updateDoc(studentDocRef, {
@@ -142,7 +164,6 @@ editProfileForm.addEventListener("submit", async (event) => {
         console.error('Error updating document: ', error);
     }
 
-    // Close the modal after submitting
-    closeModalFunc();
+    // Close modal
+    editModal.style.display = "none";
 });
-
