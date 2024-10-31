@@ -18,6 +18,7 @@
                     <input type="text" id="fullName" placeholder="Full Name" required>
                     <input type="text" id="studentId" placeholder="Student ID" required>
                     <input type="email" id="email" placeholder="Email" required>
+                    <input type="tel" id="phone" placeholder="Phone" required>
                     <input type="password" id="password" placeholder="Password" required>
                     <select id="institution" required>
                         <option value="">-- SELECT --</option>
@@ -33,18 +34,23 @@
         </div>
     </div>
     <script type="module">
-        import { handleSignUp } from './js/FirebaseConfig.js';
-
+        import { handleSignUp } from './js/SignupConfig.js';
+    
         const signupForm = document.getElementById('signupForm');
         signupForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+    
             const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
             const password = document.getElementById('password').value;
-
+            const fullName = document.getElementById('fullName').value;
+            const studentId = document.getElementById('studentId').value;
             try {
-                const userCredential = await handleSignUp(email, password);
-                alert('Sign up successful! Redirecting to login...');
-                window.location.href = 'index.html'; // Redirect to login page after successful signup
+                const test = await handleSignUp(email, password, fullName, studentId, phone);
+                if (test) {
+                    alert('Sign up successful! Redirecting to login...');
+                    window.location.href = 'index.html';
+                }
             } catch (error) {
                 alert('Error signing up: ' + error.message);
             }

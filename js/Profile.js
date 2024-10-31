@@ -62,6 +62,7 @@ fileInput.addEventListener('change', async (event) => {
 
             // Update profile image on the page
             profileImg.src = newImageUrl;
+            window.location.reload();
         }
     } else {
         alert("Please upload an image smaller than 2 MB.");

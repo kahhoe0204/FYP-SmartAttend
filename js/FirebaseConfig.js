@@ -1,9 +1,7 @@
-// FirebaseConfig.js
-
 // Import Firebase SDK with consistent versioning
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-firestore.js";
+import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-firestore.js";
 import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-storage.js";
 
 // Your web app's Firebase configuration
@@ -22,12 +20,24 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage(app); // Initialize Storage with app context
 
-// Export the Firebase instances
-export { auth, db, storage, doc, setDoc, getDoc, updateDoc, ref, uploadBytes, getDownloadURL, deleteObject };
-
-// Function to handle user sign-up
-export const handleSignUp = (email, password) => {
-    return createUserWithEmailAndPassword(auth, email, password);
+// Export the Firebase instances and Firestore utility functions
+export { 
+    auth, 
+    db, 
+    storage, 
+    doc, 
+    setDoc, 
+    getDoc, 
+    updateDoc, 
+    ref, 
+    uploadBytes, 
+    getDownloadURL, 
+    deleteObject, 
+    createUserWithEmailAndPassword,
+    collection, 
+    query, 
+    where, 
+    getDocs 
 };
 
 // Function to handle user login
@@ -38,27 +48,4 @@ export const handleLogin = (email, password) => {
 // Function to send password reset email
 export const sendPasswordReset = (email) => {
     return sendPasswordResetEmail(auth, email);
-};
-
-// Function to create a user document in Firestore
-export const createUserInFirestore = async (uid, fullName, studentId, phone, imageURL = '') => {
-    try {
-        await setDoc(doc(db, "Students", uid), {
-            fullName: fullName,
-            studentID: studentId,
-            email: auth.currentUser.email,
-            phone: phone,
-            profileImageURL: imageURL, // Ensure a default or provided URL is set here
-            attendance: {
-                absences: 0,
-                medicalCertificateSubmitted: 0,
-                totalClassesAttended: 0,
-                upcomingClasses: 0
-            },
-            department: "Information Technology" // You can make this dynamic if needed
-        });
-        console.log("User document successfully written!");
-    } catch (error) {
-        console.error("Error writing document: ", error);
-    }
 };
