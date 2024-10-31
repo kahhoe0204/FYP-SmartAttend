@@ -39,22 +39,25 @@ export const sendPasswordReset = (email) => {
 }
 
 // Function to create user document in Firestore
-export const createUserInFirestore = async (uid, fullName, studentId) => {
+export const createUserInFirestore = async (uid, fullName, studentId, phone) => {
     try {
         await setDoc(doc(db, "Students", uid), {
             fullName: fullName,
             studentID: studentId,
             email: auth.currentUser.email,
+            phone: phone,
+            imageURL: imageURL,
             attendance: {
                 absences: 0,
                 medicalCertificateSubmitted: 0,
                 totalClassesAttended: 0,
                 upcomingClasses: 0
             },
-            department: "Information Technology"
+            department: "Information Technology" // You can make this dynamic if needed
         });
         console.log("User document successfully written!");
     } catch (error) {
         console.error("Error writing document: ", error);
     }
 }
+
