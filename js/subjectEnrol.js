@@ -147,7 +147,7 @@ async function submitEnrollment(event) {
     const year = document.getElementById('year').value;
     const subjectSelect = document.getElementById('subject');
     const selectedSubjectCode = subjectSelect.value;
-    const selectedSubjectName = subjectSelect.options[subjectSelect.selectedIndex].text;
+    const selectedSubjectName = subjectSelect.options[subjectSelect.selectedIndex].text.split(" - ")[1].trim();
 
     if (department && year && selectedSubjectCode && selectedSubjectName && uid) {
         const studentDocRef = doc(db, "Students", uid);

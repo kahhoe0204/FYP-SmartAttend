@@ -24,7 +24,8 @@ const storage = getStorage(app); // Initialize Storage with app context
 export { 
     auth, 
     db, 
-    storage, 
+    storage,
+    getFirestore, 
     doc, 
     setDoc, 
     getDoc, 
