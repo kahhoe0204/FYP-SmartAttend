@@ -36,7 +36,7 @@ export const handleSignUp = async (email, password, fullName, department, studen
         const uid = userCredential.user.uid;
 
         // Proceed to create user document in Firestore
-        await createUserInFirestore(uid, fullName, studentId, department, phone, imageURL);
+        await createUserInFirestore(uid, fullName, department, studentId, phone, imageURL);
         console.log("User registered and Firestore document created successfully!");
         return true;
 
