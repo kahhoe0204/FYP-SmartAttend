@@ -17,7 +17,6 @@
                 <form id="signupForm">
                     <input type="text" id="fullName" placeholder="Full Name" required>
                     <input type="text" id="studentId" placeholder="Student ID" required>
-                    <input type="password" id="password" placeholder="Password" required>
                     <select id="department" required>
                         <option value="">-- SELECT --</option>
                         <option value="BIT">Bachelor of Information Technology</option>
@@ -54,7 +53,9 @@
             const department = document.getElementById('department').value;
             const studentId = document.getElementById('studentId').value;
             try {
-                const test = await handleSignUp(email, password, fullName, studentId, phone);
+                // Update the order in the signupForm submission handler
+                const test = await handleSignUp(email, password, fullName, department, studentId, phone);
+
                 if (test) {
                     alert('Sign up successful! Redirecting to login...');
                     window.location.href = 'index.html';
