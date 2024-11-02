@@ -17,6 +17,13 @@
                 <form id="signupForm">
                     <input type="text" id="fullName" placeholder="Full Name" required>
                     <input type="text" id="studentId" placeholder="Student ID" required>
+                    <input type="password" id="password" placeholder="Password" required>
+                    <select id="department" required>
+                        <option value="">-- SELECT --</option>
+                        <option value="BIT">Bachelor of Information Technology</option>
+                        <option value="BDA">Bachelor of Data Analytics</option>
+                        <option value="BCS">Bachelor of Computer Science</option>
+                    </select>
                     <input type="email" id="email" placeholder="Email" required>
                     <input type="tel" id="phone" placeholder="Phone" required>
                     <input type="password" id="password" placeholder="Password" required>
@@ -44,6 +51,7 @@
             const phone = document.getElementById('phone').value;
             const password = document.getElementById('password').value;
             const fullName = document.getElementById('fullName').value;
+            const department = document.getElementById('department').value;
             const studentId = document.getElementById('studentId').value;
             try {
                 const test = await handleSignUp(email, password, fullName, studentId, phone);
