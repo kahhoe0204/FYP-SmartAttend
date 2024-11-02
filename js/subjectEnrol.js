@@ -1,4 +1,4 @@
-import { db, doc, updateDoc, getDoc, auth } from './FirebaseConfig.js';
+import { db, doc, updateDoc, auth, onSnapshot } from './FirebaseConfig.js';
 
 let uid; 
 
@@ -75,23 +75,22 @@ const subjects = {
     }
 };
 
-// Filter function for the dropdowns
+// Function to filter subjects for the dropdowns
 function filterSubjects() {
     const department = document.getElementById('department').value;
     const year = document.getElementById('year').value;
     const yearSelect = document.getElementById('year');
     const subjectSelect = document.getElementById('subject');
 
+    // Reset subject dropdown
     subjectSelect.innerHTML = '<option value="">Select Subject</option>';
     subjectSelect.disabled = true;
 
-    if (department) {
-        yearSelect.disabled = false;
-    } else {
-        yearSelect.disabled = true;
-        yearSelect.value = "";
-    }
+    // Enable or disable year dropdown based on department selection
+    yearSelect.disabled = !department;
+    if (!department) yearSelect.value = "";
 
+    // Populate subjects if department and year are selected
     if (department && year && subjects[department] && subjects[department][year]) {
         subjects[department][year].forEach(subject => {
             const option = document.createElement('option');
@@ -106,23 +105,24 @@ function filterSubjects() {
 window.filterSubjects = filterSubjects;
 
 // Function to fetch and display enrolled subjects for the logged-in user
-async function fetchEnrolledSubjects() {
+function fetchEnrolledSubjects() {
     if (!uid) {
         console.log("User is not logged in. Cannot fetch subjects.");
-        return; // Exit if not logged in
+        return;
     }
 
     const studentDocRef = doc(db, "Students", uid);
 
-    try {
-        const docSnapshot = await getDoc(studentDocRef);
+    // Listen for real-time updates
+    onSnapshot(studentDocRef, (docSnapshot) => {
+        const tbody = document.querySelector('.enrollment-table tbody');
+        tbody.innerHTML = ''; // Clear any existing rows
+
         if (docSnapshot.exists()) {
             const enrolledSubjects = docSnapshot.data().enrolledSubjects;
-            const tbody = document.querySelector('.enrollment-table tbody');
-            tbody.innerHTML = ''; // Clear any existing rows
 
             // Populate table with enrolled subjects
-            for (const [code, { name, status }] of Object.entries(enrolledSubjects)) {
+            for (const [code, { name, status }] of Object.entries(enrolledSubjects || {})) {
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${code}</td>
@@ -134,9 +134,9 @@ async function fetchEnrolledSubjects() {
         } else {
             console.log("No such document!");
         }
-    } catch (error) {
-        console.error("Error fetching document: ", error);
-    }
+    }, (error) => {
+        console.error("Error listening to changes: ", error);
+    });
 }
 
 // Function to handle form submission and add enrollment data to the "enrolledSubjects" map
@@ -147,13 +147,13 @@ async function submitEnrollment(event) {
     const year = document.getElementById('year').value;
     const subjectSelect = document.getElementById('subject');
     const selectedSubjectCode = subjectSelect.value;
-    const selectedSubjectName = subjectSelect.options[subjectSelect.selectedIndex].text.split(" - ")[1].trim();
+    const selectedSubjectName = subjectSelect.options[subjectSelect.selectedIndex]?.text.split(" - ")[1]?.trim();
 
     if (department && year && selectedSubjectCode && selectedSubjectName && uid) {
         const studentDocRef = doc(db, "Students", uid);
 
         try {
-            // Add or update the enrolled subject in the "enrolledSubjects" map with Status
+            // Add or update the enrolled subject in the "enrolledSubjects" map with status
             await updateDoc(studentDocRef, {
                 [`enrolledSubjects.${selectedSubjectCode}`]: {
                     name: selectedSubjectName,
@@ -161,10 +161,7 @@ async function submitEnrollment(event) {
                 }
             });
 
-            alert("Enrollment successful!");
-
-            // Fetch and update the enrolled subjects table after successful enrollment
-            fetchEnrolledSubjects();
+            alert("Enrollment submitted for approval!");
         } catch (error) {
             console.error("Error updating document: ", error);
             alert("Failed to enroll. Please try again.");

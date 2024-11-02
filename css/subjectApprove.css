@@ -56,7 +56,7 @@ body {
 }
 
 .approve-button:hover {
-    background-color: #45a049;
+    background-color: #3e9042;
 }
 
 .reject-button {
@@ -75,7 +75,7 @@ body {
 }
 
 .reject-button:hover {
-    background-color: #e53935;
+    background-color: #c7302d;
 }
 
 .button-container {
