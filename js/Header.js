@@ -63,7 +63,7 @@ function loadNavBar(userRole) {
     if (userRole === "student-logged-in") {
         console.log('Loading navbar for student-logged-in');
         navContent = `
-            <a href="#">Home</a>
+            <a href="studentHome.html">Home</a>
             <a href="#">Class Attendance</a>
             <a href="#">Submit MC</a>
             <a href="subjectEnrol.html">Subject Enrolment</a>
