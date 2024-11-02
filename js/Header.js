@@ -73,9 +73,9 @@ function loadNavBar(userRole) {
     } else if (userRole === "admin-logged-in") {
         console.log('Loading navbar for admin-logged-in');
         navContent = `
-            <a href="#">Admin Dashboard</a>
-            <a href="#">User Management</a>
-            <a href="#">Reports</a>
+            <a href="subjectApprove.html">Subject Enrolment Review</a>
+            <a href="#">Class Management</a>
+            <a href="#">MC Review</a>
             <button class="btn logout">Log Out</button>
         `;
     } else if (userRole === "student-logged-out" || userRole === "admin-logged-out") {

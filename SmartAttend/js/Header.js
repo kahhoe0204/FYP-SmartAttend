@@ -66,22 +66,23 @@ function loadNavBar(userRole) {
             <a href="#">Home</a>
             <a href="#">Class Attendance</a>
             <a href="#">Submit MC</a>
+            <a href="subjectEnrol.html">Subject Enrolment</a>
             <a href="Profile.html">Profile</a>
             <button class="btn logout">Log Out</button>
         `;
     } else if (userRole === "admin-logged-in") {
         console.log('Loading navbar for admin-logged-in');
         navContent = `
-            <a href="#">Admin Dashboard</a>
-            <a href="#">User Management</a>
-            <a href="#">Reports</a>
+            <a href="subjectApprove.html">Subject Enrolment Review</a>
+            <a href="#">Class Management</a>
+            <a href="#">MC Review</a>
             <button class="btn logout">Log Out</button>
         `;
     } else if (userRole === "student-logged-out" || userRole === "admin-logged-out") {
         console.log('Loading navbar for logged-out user');
         navContent = `
             <a href="#">Home</a>
-            <button class="btn login-btn" onclick="window.location.href='Login.html'">Login</button>
+            <button class="btn login-btn" onclick="window.location.href='index.html'">Login</button>
             <button class="btn signup-btn" onclick="window.location.href='Signup.html'">Sign Up</button>
         `;
     }

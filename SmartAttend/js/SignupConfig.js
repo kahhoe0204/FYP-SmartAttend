@@ -14,7 +14,7 @@ async function isStudentIdUnique(studentId) {
 }
 
 // Function to handle user sign-up with email and student ID validation
-export const handleSignUp = async (email, password, fullName, department, studentId, phone, imageURL = '') => {
+export const handleSignUp = async (email, password, fullName, studentId, phone, imageURL = '') => {
     // Check if email is valid
     if (!isValidHelpLiveEmail(email)) {
         console.error("Registration failed: Email must be a @helplive.edu.my address.");
@@ -36,7 +36,7 @@ export const handleSignUp = async (email, password, fullName, department, studen
         const uid = userCredential.user.uid;
 
         // Proceed to create user document in Firestore
-        await createUserInFirestore(uid, fullName, department, studentId, phone, imageURL);
+        await createUserInFirestore(uid, fullName, studentId, phone, imageURL);
         console.log("User registered and Firestore document created successfully!");
         return true;
 
@@ -47,7 +47,7 @@ export const handleSignUp = async (email, password, fullName, department, studen
 };
 
 // Function to create a user document in Firestore
-export const createUserInFirestore = async (uid, fullName, department, studentId, phone, imageURL = '') => {
+export const createUserInFirestore = async (uid, fullName, studentId, phone, imageURL = '') => {
     try {
         await setDoc(doc(db, "Students", uid), {
             fullName: fullName,
@@ -55,13 +55,13 @@ export const createUserInFirestore = async (uid, fullName, department, studentId
             email: auth.currentUser.email,
             phone: phone,
             profileImageURL: imageURL,
-            department,
             attendance: {
                 absences: 0,
                 medicalCertificateSubmitted: 0,
                 totalClassesAttended: 0,
                 upcomingClasses: 0
-            }
+            },
+            department: "Information Technology"
         });
         console.log("User document successfully written in Firestore!");
     } catch (error) {

@@ -1,7 +1,7 @@
 // Import Firebase SDK with consistent versioning
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-firestore.js";
+import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, query, where, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-firestore.js";
 import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-storage.js";
 
 // Your web app's Firebase configuration
@@ -24,7 +24,8 @@ const storage = getStorage(app); // Initialize Storage with app context
 export { 
     auth, 
     db, 
-    storage, 
+    storage,
+    getFirestore, 
     doc, 
     setDoc, 
     getDoc, 
@@ -37,7 +38,8 @@ export {
     collection, 
     query, 
     where, 
-    getDocs 
+    getDocs,
+    onSnapshot, 
 };
 
 // Function to handle user login
