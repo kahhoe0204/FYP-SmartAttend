@@ -1,5 +1,5 @@
 import readXlsxFile from 'https://cdn.jsdelivr.net/npm/read-excel-file@5.8.6/+esm';
-import { collection, db, doc, getDocs, writeBatch } from './FirebaseConfig.js';
+import { collection, db, doc, getDocs, deleteDoc, writeBatch } from './FirebaseConfig.js';
 
 const subjectCodes = [
     "BIT101", "BIT102", "BIT103", "BIT104", "BIT106", "BIT107", "BIT108", "BIT110",
@@ -9,32 +9,6 @@ const subjectCodes = [
     "BCS102", "BCS105", "BCS201", "BCS202", "BCS302"
   ];
   
-  function getSemester() {
-    const now = new Date();
-    const shortSemesterStart = new Date('2024-05-27'); // Short semester start date
-    const longSemesterStart1 = new Date('2024-08-19');  // Long semester start date (August)
-    const longSemesterStart2 = new Date('2024-01-08');  // Long semester start date (January)
-
-    const longSemesterEnd1 = new Date(longSemesterStart1);
-    longSemesterEnd1.setMonth(longSemesterEnd1.getMonth() + 4);  // End of long semester (4 months duration)
-    
-    const longSemesterEnd2 = new Date(longSemesterStart2);
-    longSemesterEnd2.setMonth(longSemesterEnd2.getMonth() + 4);  // End of long semester (4 months duration)
-
-    // Check if it's in the short or long semester based on the current date
-    if (now >= shortSemesterStart && now <= longSemesterStart1) {
-        return { type: 'short', weeks: 7 };  // Short semester (7 weeks)
-    } else if (
-        (now >= longSemesterStart1 && now <= longSemesterEnd1) || 
-        (now >= longSemesterStart2 && now <= longSemesterEnd2)
-    ) {
-        return { type: 'long', weeks: 14 };  // Long semester (14 weeks)
-    } else {
-        return { type: 'unknown', weeks: 0 };  // Default, shouldn't happen during an active semester
-    }
-}
-
-
 
 // Function to delete all documents in /Subjects/{subjectCode}/Classes using batch operations
 async function deleteClassesSubCollectionBatch(subjectCode, batch) {
@@ -77,7 +51,7 @@ async function checkIfSubjectsExist() {
     const subjectsRef = collection(db, 'Subjects');
     const snapshot = await getDocs(subjectsRef);
 
-    return snapshot.empty; 
+    return !snapshot.empty; 
 }
 
 // Modify the existing DOMContentLoaded listener to implement the delete functionality
@@ -272,114 +246,40 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-// Function to save the new timetable data
-async function saveTimetableToFirestore(timetable) {
-    const semester = getSemester();  // Get the current semester
-    const numberOfWeeks = semester.weeks;  // Get the weeks based on the semester type
+    // Function to save the new timetable data
+    async function saveTimetableToFirestore(timetable) {
+        const now = new Date();
+        const currentMonth = now.getMonth() + 1; // Months are 0-based
+        const numberOfWeeks = [1, 2, 3, 8, 9, 10, 11, 12].includes(currentMonth) ? 14 : 7;
 
-    if (semester.type === 'unknown') {
-        alert('Error: Could not determine the semester.');
-        return;
-    }
+        try {
+            console.log('Starting to save new timetable...');
 
-    // Get the start date of the semester (based on the current semester)
-    const semesterStartDate = getSemesterStartDate();
+            const batch = writeBatch(db);
 
-    try {
-        console.log('Starting to save new timetable...');
+            Object.keys(timetable).forEach(subjectCode => {
+                const subjectRef = doc(db, 'Subjects', subjectCode);
 
-        const batch = writeBatch(db);
-
-        // Iterate over each subject in the timetable
-        Object.keys(timetable).forEach(subjectCode => {
-            const subjectRef = doc(db, 'Subjects', subjectCode);
-
-            // Iterate over the weeks
-            for (let week = 1; week <= numberOfWeeks; week++) {
-                // Iterate over the time slots for the subject
-                timetable[subjectCode].forEach(timeSlot => {
-                    // Get the class day (e.g., Monday, Tuesday)
-                    const classDay = timeSlot.split('_')[0];
-
-                    // Calculate the class date for the specific week and day
-                    const classDate = getClassDateForWeek(semesterStartDate, classDay, week);
-
-                    // Create the sub-collection document name with the format 'date_timeSlot'
-                    const classRef = doc(collection(subjectRef, 'Classes'), `${classDate}_${timeSlot}`);
-
-                    // Add the class to the batch
-                    batch.set(classRef, {
-                        students: {},  // Placeholder for student information
-                        week,
-                        timeSlot,
-                        classDate
+                for (let week = 1; week <= numberOfWeeks; week++) {
+                    timetable[subjectCode].forEach(timeSlot => {
+                        // Create the sub-collection document for the week and time slot
+                        const classRef = doc(collection(subjectRef, 'Classes'), `week${week}_${timeSlot}`);
+                        batch.set(classRef, {
+                            students: {}, 
+                            week,
+                            timeSlot
+                        });
                     });
-                });
-            }
-        });
+                }
+            });
 
-        await batch.commit(); 
-        console.log('New timetable saved successfully.');
-    } catch (error) {
-        console.error('Error saving new timetable to Firestore:', error);
-        throw error; 
-    }
-}
-
-// Helper function to get the start date of the semester
-function getSemesterStartDate() {
-    const now = new Date();
-    const semester = getSemester(); // Get the current semester
-
-    let semesterStartDate = null;
-
-    if (semester.type === 'short') {
-        // Short semester starts on May 27
-        semesterStartDate = new Date('2024-05-27');
-    } else if (semester.type === 'long') {
-        // Long semester starts on August 19 or January 8
-        const longSemesterStart1 = new Date('2024-08-19');
-        const longSemesterStart2 = new Date('2024-01-08');
-
-        // Choose the correct start date depending on the current date
-        if (now >= longSemesterStart1 && now <= new Date(longSemesterStart1).setMonth(longSemesterStart1.getMonth() + 4)) {
-            semesterStartDate = longSemesterStart1;
-        } else if (now >= longSemesterStart2 && now <= new Date(longSemesterStart2).setMonth(longSemesterStart2.getMonth() + 4)) {
-            semesterStartDate = longSemesterStart2;
+            await batch.commit(); 
+            console.log('New timetable saved successfully.');
+        } catch (error) {
+            console.error('Error saving new timetable to Firestore:', error);
+            throw error; 
         }
     }
-
-    return semesterStartDate;
-}
-
-// Helper function to calculate the date for a specific class day and week
-function getClassDateForWeek(startDate, classDay, weekNumber) {
-    const dayOfWeekMap = {
-        Monday: 1,
-        Tuesday: 2,
-        Wednesday: 3,
-        Thursday: 4,
-        Friday: 5
-    };
-
-    // Start with the first day of the semester
-    const classDate = new Date(startDate);
-
-    // Find the first occurrence of the given class day
-    let dayOffset = (dayOfWeekMap[classDay] - classDate.getDay() + 7) % 7;
-    classDate.setDate(classDate.getDate() + dayOffset);
-
-    // Add the number of weeks to the date to get the specific week
-    classDate.setDate(classDate.getDate() + (weekNumber - 1) * 7);
-
-    // Format the date to 'YYYY-MM-DD' (for example, '2024-08-19')
-    const year = classDate.getFullYear();
-    const month = (classDate.getMonth() + 1).toString().padStart(2, '0');  // Month is 0-based
-    const day = classDate.getDate().toString().padStart(2, '0');
-
-    return `${year}-${month}-${day}`;
-}
-    
 
     // Function to process timetable data from the UI
     function processTimetableDataFromUI() {
