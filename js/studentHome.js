@@ -40,7 +40,7 @@ function renderSubjectsAsCards(subjects) {
 
     if (subjects.length === 0) {
         console.log("No approved subjects to display.");
-        container.innerHTML = "<p>No approved subjects found.</p>";
+        container.innerHTML = "<p>No enroled subjects found.</p>";
         return;
     }
 
@@ -51,6 +51,7 @@ function renderSubjectsAsCards(subjects) {
         card.innerHTML = `
             <h2>${subject.id}</h2>
             <h3>${subject.name}</h3>
+            <button class="check-in-button">Check-In</button>
         `;
 
         container.appendChild(card);

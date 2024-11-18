@@ -17,21 +17,20 @@ body {
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     max-width: 800px;
-    margin: 0 auto;
+    margin-top: 20px;
     padding: 20px;
     text-align: center;
 }
 
 #student-greeting {
     font-size: 20px;
-    margin-top: 20px;
     margin-bottom: 20px;
 }
 
 .cards-container {
     display: flex;
     flex-wrap: wrap;
-    gap: 16px;
+    gap: 24px;
     justify-content: center;
 }
 
@@ -42,6 +41,10 @@ body {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     width: 200px;
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; 
+    height: auto;
 }
 
 .card h3 {
@@ -52,4 +55,20 @@ body {
 .card p {
     font-size: 0.9em;
     color: #666;
+}
+
+.check-in-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 15px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: inline-block;
+}
+
+.check-in-button:hover {
+    background-color: #0056b3;
 }
