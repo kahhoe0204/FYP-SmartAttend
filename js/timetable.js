@@ -309,7 +309,7 @@ async function saveTimetableToFirestore(timetable) {
 
                     // Add the class to the batch
                     batch.set(classRef, {
-                        students: {},  // Placeholder for student information
+                        attendance: {},  // Placeholder for student information
                         week,
                         timeSlot,
                         classDate

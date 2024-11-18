@@ -139,10 +139,10 @@ async function handleCheckIn(subjectId, classId) {
                     const classSnapshot = await getDoc(classRef);
 
                     if (classSnapshot.exists()) {
-                        const studentsMap = classSnapshot.data().students || {};
+                        const attendanceMap = classSnapshot.data().attendance || {};
 
                         // Add or update student information in the `students` map
-                        studentsMap[uid] = {
+                        attendanceMap[uid] = {
                             name: studentData.fullName,
                             email: studentData.email,
                             checkInTime,
@@ -154,7 +154,7 @@ async function handleCheckIn(subjectId, classId) {
                         };
 
                         // Update the `students` map in the Firestore document
-                        await setDoc(classRef, { students: studentsMap }, { merge: true });
+                        await setDoc(classRef, { attendance: attendanceMap }, { merge: true });
                         alert("Check-In successful!");
                     } else {
                         console.error(`Class document ${classId} not found in subject ${subjectId}`);
