@@ -8,7 +8,6 @@ let userRole = "student-logged-out";
 auth.onAuthStateChanged((authUser) => {
     if (authUser) {
         const email = authUser.email; // Retrieve the user's email
-        console.log('User logged in with email:', email);
         if (email) {
             login(email); // Call login with user's email
         } else {
@@ -28,19 +27,16 @@ function determineUserRole(email) {
     } else {
         userRole = "student-logged-in";
     }
-    console.log('User role set to:', userRole);
     loadNavBar(userRole); // Reload navbar based on new role
 }
 
 // Example login function that calls determineUserRole with email
 function login(email) {
-    console.log('current email: ', email);
     determineUserRole(email); // Set role based on email
 }
 
 // Function to handle logout
 function logout() {
-    console.log('Logging out...');
     if (userRole === "student-logged-in" || userRole === "lecturer-logged-in" || userRole === "admin-logged-in") {
         userRole = userRole.includes("student") ? "student-logged-out" : "admin-logged-out";
         console.log('Role after logout:', userRole);
@@ -61,7 +57,6 @@ function loadNavBar(userRole) {
 
     // Determine navigation links based on user role
     if (userRole === "student-logged-in") {
-        console.log('Loading navbar for student-logged-in');
         navContent = `
             <a href="studentHome.html">Home</a>
             <a href="#">Class Attendance</a>
@@ -71,7 +66,6 @@ function loadNavBar(userRole) {
             <button class="btn logout">Log Out</button>
         `;
     } else if (userRole === "admin-logged-in") {
-        console.log('Loading navbar for admin-logged-in');
         navContent = `
             <a href="subjectApprove.html">Subject Enrolment Review</a>
             <a href="#">Class Management</a>
@@ -79,7 +73,6 @@ function loadNavBar(userRole) {
             <button class="btn logout">Log Out</button>
         `;
     } else if (userRole === "student-logged-out" || userRole === "admin-logged-out") {
-        console.log('Loading navbar for logged-out user');
         navContent = `
             <a href="#">Home</a>
             <button class="btn login-btn" onclick="window.location.href='index.html'">Login</button>
@@ -99,6 +92,5 @@ function loadNavBar(userRole) {
 
 // Load the navbar when the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOM fully loaded, loading navbar...');
     loadNavBar(userRole); // Initially load the navbar with the current role
 });

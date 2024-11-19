@@ -1,11 +1,13 @@
 import { db, doc, updateDoc, auth, onSnapshot } from './FirebaseConfig.js';
+import { toastrOptions } from './toastrConfig.js';
+
+toastr.options = toastrOptions;
 
 let uid; 
 
 auth.onAuthStateChanged((authUser) => {
     if (authUser) {
         uid = authUser.uid;
-        console.log('User logged in with userID:', uid);
         fetchEnrolledSubjects(uid); 
     } else {
         console.log('No user is currently logged in');
@@ -135,7 +137,7 @@ function fetchEnrolledSubjects() {
             console.log("No such document!");
         }
     }, (error) => {
-        console.error("Error listening to changes: ", error);
+        toastr.error("Error listening to changes: ", error);
     });
 }
 
@@ -161,13 +163,13 @@ async function submitEnrollment(event) {
                 }
             });
 
-            alert("Enrollment submitted for approval!");
+            toastr.success("Enrollment submitted for approval!");
         } catch (error) {
-            console.error("Error updating document: ", error);
-            alert("Failed to enroll. Please try again.");
+            toastr.error("Error updating document: ", error);
+            toastr.alert("Failed to enroll. Please try again.");
         }
     } else {
-        alert("Please fill in all fields before submitting.");
+        toastr.alert("Please fill in all fields before submitting.");
     }
 }
 

@@ -1,4 +1,7 @@
 import { getFirestore, collection, onSnapshot, doc, updateDoc } from "./FirebaseConfig.js";
+import { toastrOptions } from "./toastrConfig.js";
+
+toastr.options = toastrOptions;
 
 const db = getFirestore();
 
@@ -35,7 +38,7 @@ function fetchSubmittedSubjects() {
                     }
                 });
             } else {
-                console.warn(`Enrolled subjects missing or not an object for Student ID: ${studentData.studentID}`);
+                console.log(`Enrolled subjects missing or not an object for Student ID: ${studentData.studentID}`);
             }
         });
 
@@ -64,10 +67,9 @@ async function handleApprove(event) {
             await updateDoc(studentDocRef, {
                 [`enrolledSubjects.${subjectCode}.status`]: "Enrolled"
             });
-            console.log(`Status updated for ${subjectCode} to 'Enrolled' for student ${studentID}`);
         } catch (error) {
             console.error("Error updating document: ", error);
-            alert("Failed to approve enrollment. Please try again.");
+            toastr.alert("Failed to approve enrollment. Please try again.");
         }
     }
 }
@@ -85,10 +87,9 @@ async function handleReject(event){
             await updateDoc(studentDocRef, {
                 [`enrolledSubjects.${subjectCode}.status`]: "Rejected"
             });
-            console.log(`Status updated for ${subjectCode} to 'Rejected' for student ${studentID}`);
         } catch (error) {
             console.error("Error updating document: ", error);
-            alert("Failed to reject enrollment. Please try again.");
+           toastr.alert("Failed to reject enrollment. Please try again.");
         }
     }
 }

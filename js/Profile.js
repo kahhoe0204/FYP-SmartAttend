@@ -1,11 +1,13 @@
 import { auth, db, doc, getDoc, updateDoc, storage, ref, deleteObject, uploadBytes, getDownloadURL } from './FirebaseConfig.js';
+import { toastrOptions } from './toastrConfig.js';
+
+toastr.options = toastrOptions;
 
 let uid;
 
 auth.onAuthStateChanged((authUser) => {
     if (authUser) {
         uid = authUser.uid;
-        console.log('User logged in with userID:', uid);
         fetchProfileData(uid); 
     } else {
         console.log('No user is currently logged in');
@@ -65,7 +67,7 @@ fileInput.addEventListener('change', async (event) => {
             window.location.reload();
         }
     } else {
-        alert("Please upload an image smaller than 2 MB.");
+        toastr.alert("Please upload an image smaller than 2 MB.");
     }
 });
 
