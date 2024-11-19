@@ -1,5 +1,8 @@
 import readXlsxFile from 'https://cdn.jsdelivr.net/npm/read-excel-file@5.8.6/+esm';
 import { collection, db, doc, getDocs, writeBatch } from './FirebaseConfig.js';
+import { toastrOptions } from './toastrConfig.js';
+
+toastr.options = toastrOptions;
 
 const subjectCodes = [
     "BIT101", "BIT102", "BIT103", "BIT104", "BIT106", "BIT107", "BIT108", "BIT110",
@@ -44,11 +47,9 @@ async function deleteClassesSubCollectionBatch(subjectCode, batch) {
     if (snapshot.empty) {
         console.log(`No documents found in /Subjects/${subjectCode}/Classes.`);
     } else {
-        console.log(`Found ${snapshot.docs.length} document(s) in /Subjects/${subjectCode}/Classes.`);
         // Add each delete operation to the batch
         snapshot.docs.forEach(docSnapshot => {
             batch.delete(docSnapshot.ref);
-            console.log(`Added to batch: ${docSnapshot.ref.path}`);
         });
     }
 }
@@ -57,7 +58,6 @@ async function deleteClassesSubCollectionBatch(subjectCode, batch) {
 async function deleteSubjectDocumentBatch(subjectCode, batch) {
     const subjectRef = doc(db, 'Subjects', subjectCode);
     batch.delete(subjectRef);
-    console.log(`Added to batch: /Subjects/${subjectCode}`);
 }
 
 async function deleteAllSubjectsParallel() {
@@ -92,13 +92,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Check if the file is an Excel file
         if (!file || !file.name.match(/\.(xls|xlsx)$/)) {
-            alert('Please upload a valid Excel file.');
+            toastr.alert('Please upload a valid Excel file.');
             return;
         }
 
         // Use readXlsxFile to read the uploaded file
         readXlsxFile(file).then(function (data) {
-            console.log('Parsed Excel Data:', data);
 
             if (data && data.length > 0) {
                 const headers = data[0]; // First row should contain the headers
@@ -107,35 +106,33 @@ document.addEventListener('DOMContentLoaded', function () {
                 const isValid = expectedHeaders.every((header, index) => header === headers[index]);
 
                 if (!isValid) {
-                    document.getElementById('status').innerText = 'Error: The file does not have the correct headers (Day, Subject Code, Venue, Time).';
+                    toastr.error('Error: The file does not have the correct headers (Day, Subject Code, Venue, Time).');
                     return;
                 }
 
                 const parsedSubjects = processTimetableData(data);
 
                 if (parsedSubjects) {
-                    document.getElementById('status').innerText = 'Timetable uploaded and processed successfully!';
+                    toastr.info('Timetable uploaded and processed successfully!');
                 }
             } else {
-                document.getElementById('status').innerText = 'Error: Invalid Excel file format.';
+                toastr.error('Error: Invalid Excel file format.');
             }
         }).catch(function (error) {
-            console.error('Error reading Excel file:', error);
-            document.getElementById('status').innerText = 'Error processing file!';
+            toastr.error('Error reading Excel file:', error);
+            toastr.error('Error processing file!');
         });
 
         // Implement the save button logic
         document.getElementById('save').addEventListener('click', async () => {
-            console.log("Save button clicked once.");
 
             const saveButton = document.getElementById('save');
             saveButton.disabled = true;
 
             const timetable = processTimetableDataFromUI();
-            console.log("Processed Timetable Data:", timetable);
 
             if (!timetable) {
-                alert('Error: No timetable data to save.');
+                toastr.error('Error: No timetable data to save.');
                 return;
             }
 
@@ -145,9 +142,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 if (subjectsExist) {
                     // Ask the user for confirmation before overwriting
-                    const confirmOverwrite = confirm('Existing subjects found. Do you want to overwrite the timetable?');
+                    const confirmOverwrite = toastr.confirm('Existing subjects found. Do you want to overwrite the timetable?');
                     if (!confirmOverwrite) {
-                        alert('Timetable save operation cancelled.');
+                        toastr.info('Timetable save operation cancelled.');
                         return;  // Stop if the user cancels the operation
                     }
                 }
@@ -156,10 +153,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 await deleteAllSubjectsParallel();
                 await saveTimetableToFirestore(timetable);
 
-                alert('Timetable saved successfully!');
+                toastr.success('Timetable saved successfully!');
             } catch (error) {
-                console.error('Error during save operation:', error);
-                alert('Error saving timetable. Please try again.');
+                toastr.error('Error saving timetable. Please try again.');
             } finally {
                 saveButton.disabled = false;
             }
@@ -206,11 +202,10 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         if (Object.keys(timetable).length === 0 || !Object.values(timetable).some(day => Object.keys(day).length > 0)) {
-            document.getElementById('status').innerText = 'Error: Timetable data is missing or invalid.';
+           toastr.error('Error: Timetable data is missing or invalid.');
             return null;
         }
 
-        console.log('Final timetable:', timetable);
         return displayTimetable(timetable);
     }
 
@@ -278,7 +273,7 @@ async function saveTimetableToFirestore(timetable) {
     const numberOfWeeks = semester.weeks;  // Get the weeks based on the semester type
 
     if (semester.type === 'unknown') {
-        alert('Error: Could not determine the semester.');
+        toastr.eroor('Error: Could not determine the semester.');
         return;
     }
 
@@ -286,8 +281,6 @@ async function saveTimetableToFirestore(timetable) {
     const semesterStartDate = getSemesterStartDate();
 
     try {
-        console.log('Starting to save new timetable...');
-
         const batch = writeBatch(db);
 
         // Iterate over each subject in the timetable
@@ -319,9 +312,9 @@ async function saveTimetableToFirestore(timetable) {
         });
 
         await batch.commit(); 
-        console.log('New timetable saved successfully.');
+        toastr.success('New timetable saved successfully.');
     } catch (error) {
-        console.error('Error saving new timetable to Firestore:', error);
+        toastr.error('Error saving new timetable to database:', error);
         throw error; 
     }
 }

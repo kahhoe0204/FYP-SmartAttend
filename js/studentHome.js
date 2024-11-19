@@ -1,4 +1,7 @@
 import { auth, db, doc, getDoc, collection, getDocs, setDoc } from './FirebaseConfig.js';
+import { toastrOptions } from './toastrConfig.js';
+
+toastr.options = toastrOptions;
 
 // Fetch approved subjects for logged-in user
 async function fetchApprovedSubjects(uid) {
@@ -14,11 +17,11 @@ async function fetchApprovedSubjects(uid) {
                 }));
             return approvedSubjects;
         } else {
-            console.error("Student document not found");
+            toastr.error("Student document not found");
             return [];
         }
     } catch (error) {
-        console.error("Error fetching approved subjects:", error);
+        toastr.error("Error fetching approved subjects:", error);
         return [];
     }
 }
@@ -35,27 +38,47 @@ async function fetchClassSchedules(subjectId) {
         }));
         return classSchedules;
     } catch (error) {
-        console.error(`Error fetching classes for subject ${subjectId}:`, error);
+        toastr.error(`Error fetching classes for subject ${subjectId}:`, error);
         return [];
     }
 }
 
 // Check if a class is available at the current time
 function isClassAvailable(schedule, now) {
-    const [day, startTime] = schedule.timeSlot.split('_');
+    const [day, timeRange] = schedule.timeSlot.split('_'); //
     const currentDay = now.toLocaleString('en-US', { weekday: 'long' });
 
-    // Parse the time slot start (e.g., "9AM")
-    const classTime = new Date();
-    const timeParts = startTime.match(/(\d+)(AM|PM)/);
-    if (timeParts) {
-        let hour = parseInt(timeParts[1]);
-        if (timeParts[2] === 'PM' && hour < 12) hour += 12; // Convert to 24-hour format
-        classTime.setHours(hour, 0, 0, 0);
+    if (day !== currentDay) {
+        return false; 
     }
 
-    return day === currentDay && now.getHours() === classTime.getHours();
+    // Parse the time range 
+    const [startTime, endTime] = timeRange.split('-');
+
+    const parseTime = (timeStr) => {
+        const timeParts = timeStr.match(/(\d+)(AM|PM)/);
+        if (timeParts) {
+            let hour = parseInt(timeParts[1]);
+            if (timeParts[2] === 'PM' && hour < 12) hour += 12; // Convert to 24-hour format
+            return hour;
+        }
+        return null;
+    };
+
+    const startHour = parseTime(startTime);
+    const endHour = parseTime(endTime);
+
+    if (startHour === null || endHour === null) {
+        console.error("Invalid time format in schedule:", timeRange);
+        return false;
+    }
+
+    const currentHour = now.getHours();
+
+    // Check if the current time is within the start and end times
+    return currentHour >= startHour && currentHour < endHour;
 }
+
 
 // Render subjects in card format and handle schedule checks
 async function renderSubjectsAsCards(subjects) {
@@ -104,14 +127,14 @@ async function displayStudentGreeting(uid) {
             document.getElementById('student-greeting').textContent = `Hello, ${studentName} 😊!`;
         }
     } catch (error) {
-        console.error("Error fetching student name:", error);
+        toastr.error("Error fetching student name:", error);
     }
 }
 
 // Handle Check-In Button Click
 async function handleCheckIn(subjectId, classId) {
     if (!classId) {
-        alert("Class is currently unavailable for check-in.");
+        toastr.alert("Class is currently unavailable for check-in.");
         return;
     }
 
@@ -120,8 +143,8 @@ async function handleCheckIn(subjectId, classId) {
         const studentDoc = await getDoc(doc(db, "Students", uid));
 
         if (!studentDoc.exists()) {
-            console.error("Student document not found.");
-            alert("Failed to retrieve student data. Please try again.");
+            toastr.error("Student document not found.");
+            toastr.alert("Failed to retrieve student data. Please try again.");
             return;
         }
 
@@ -132,7 +155,7 @@ async function handleCheckIn(subjectId, classId) {
             navigator.geolocation.getCurrentPosition(
                 async (position) => {
                     const { latitude, longitude } = position.coords;
-                    const checkInTime = new Date().toISOString();
+                    const checkInTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
                     // Reference to the class document's `students` map
                     const classRef = doc(db, `Subjects/${subjectId}/Classes/${classId}`);
@@ -155,23 +178,23 @@ async function handleCheckIn(subjectId, classId) {
 
                         // Update the `students` map in the Firestore document
                         await setDoc(classRef, { attendance: attendanceMap }, { merge: true });
-                        alert("Check-In successful!");
+                        toastr.success("Check-In successful!");
                     } else {
                         console.error(`Class document ${classId} not found in subject ${subjectId}`);
-                        alert("Class not found. Please try again.");
+                        toastr.alert("Class not found. Please try again.");
                     }
                 },
                 (error) => {
                     console.error("Error getting location:", error);
-                    alert("Failed to get location. Please enable location services and try again.");
+                    toastr.alert("Failed to get location. Please enable location services and try again.");
                 }
             );
         } else {
-            alert("Geolocation is not supported by your browser.");
+            toastr.alert("Geolocation is not supported by your browser.");
         }
     } catch (error) {
         console.error("Error during check-in:", error);
-        alert("Failed to check in. Please try again.");
+        toastr.alert("Failed to check in. Please try again.");
     }
 }
 
@@ -195,7 +218,7 @@ function init() {
             const approvedSubjects = await fetchApprovedSubjects(uid);
             await renderSubjectsAsCards(approvedSubjects);
         } else {
-            console.log('No user is currently logged in');
+            toastr.info('No user is currently logged in');
         }
     });
 }
