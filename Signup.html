@@ -60,11 +60,11 @@
                 const test = await handleSignUp(email, password, fullName, department, studentId, phone);
 
                 if (test) {
-                    alert('Sign up successful! Redirecting to login...');
+                    toastr.success('Sign up successful! Redirecting to login...');
                     window.location.href = 'index.html';
                 }
             } catch (error) {
-                alert('Error signing up: ' + error.message);
+                toastr.warning('Error signing up: ' + error.message);
             }
         });
     </script>

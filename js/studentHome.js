@@ -134,7 +134,7 @@ async function displayStudentGreeting(uid) {
 // Handle Check-In Button Click
 async function handleCheckIn(subjectId, classId) {
     if (!classId) {
-        toastr.alert("Class is currently unavailable for check-in.");
+        toastr.warning("Class is currently unavailable for check-in.");
         return;
     }
 
@@ -144,7 +144,7 @@ async function handleCheckIn(subjectId, classId) {
 
         if (!studentDoc.exists()) {
             toastr.error("Student document not found.");
-            toastr.alert("Failed to retrieve student data. Please try again.");
+            toastr.warning("Failed to retrieve student data. Please try again.");
             return;
         }
 
@@ -181,20 +181,20 @@ async function handleCheckIn(subjectId, classId) {
                         toastr.success("Check-In successful!");
                     } else {
                         console.error(`Class document ${classId} not found in subject ${subjectId}`);
-                        toastr.alert("Class not found. Please try again.");
+                        toastr.warning("Class not found. Please try again.");
                     }
                 },
                 (error) => {
                     console.error("Error getting location:", error);
-                    toastr.alert("Failed to get location. Please enable location services and try again.");
+                    toastr.warning("Failed to get location. Please enable location services and try again.");
                 }
             );
         } else {
-            toastr.alert("Geolocation is not supported by your browser.");
+            toastr.warning("Geolocation is not supported by your browser.");
         }
     } catch (error) {
         console.error("Error during check-in:", error);
-        toastr.alert("Failed to check in. Please try again.");
+        toastr.warning("Failed to check in. Please try again.");
     }
 }
 

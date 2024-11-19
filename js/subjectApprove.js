@@ -69,7 +69,7 @@ async function handleApprove(event) {
             });
         } catch (error) {
             console.error("Error updating document: ", error);
-            toastr.alert("Failed to approve enrollment. Please try again.");
+            toastr.warning("Failed to approve enrollment. Please try again.");
         }
     }
 }
@@ -89,7 +89,7 @@ async function handleReject(event){
             });
         } catch (error) {
             console.error("Error updating document: ", error);
-           toastr.alert("Failed to reject enrollment. Please try again.");
+           toastr.warning("Failed to reject enrollment. Please try again.");
         }
     }
 }

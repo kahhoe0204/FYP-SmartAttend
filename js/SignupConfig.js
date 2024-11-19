@@ -21,7 +21,7 @@ export const handleSignUp = async (email, password, fullName, department, studen
     // Check if email is valid
     if (!isValidHelpLiveEmail(email)) {
         console.error("Registration failed: Email must be a @helplive.edu.my address.");
-        toastr.alert("Please use a @helplive.edu.my email address to register.");
+        toastr.warning("Please use a @helplive.edu.my email address to register.");
         return false; // Exit function if email is invalid
     }
 
@@ -29,7 +29,7 @@ export const handleSignUp = async (email, password, fullName, department, studen
     const uniqueStudentId = await isStudentIdUnique(studentId);
     if (!uniqueStudentId) {
         console.error("Registration failed: Duplicate student ID.");
-        toastr.alert("This student ID is already registered. Please use a unique student ID.");
+        toastr.warning("This student ID is already registered. Please use a unique student ID.");
         return false; // Exit function if studentId is not unique
     }
 

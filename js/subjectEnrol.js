@@ -166,10 +166,10 @@ async function submitEnrollment(event) {
             toastr.success("Enrollment submitted for approval!");
         } catch (error) {
             toastr.error("Error updating document: ", error);
-            toastr.alert("Failed to enroll. Please try again.");
+            toastr.warning("Failed to enroll. Please try again.");
         }
     } else {
-        toastr.alert("Please fill in all fields before submitting.");
+        toastr.warning("Please fill in all fields before submitting.");
     }
 }
 

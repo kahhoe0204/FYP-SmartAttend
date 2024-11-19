@@ -44,10 +44,10 @@
 
             try {
                 const userCredential = await handleLogin(email, password);
-                alert('Login successful! Redirecting to profile...');
+                toastr.success('Login successful! Redirecting to profile...');
                 window.location.href = 'Profile.html'; // Redirect to profile page after successful login
             } catch (error) {
-                alert('Error logging in: ' + error.message);
+                toastr.warning('Error logging in: ' + error.message);
             }
         });
     </script>

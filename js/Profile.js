@@ -67,7 +67,7 @@ fileInput.addEventListener('change', async (event) => {
             window.location.reload();
         }
     } else {
-        toastr.alert("Please upload an image smaller than 2 MB.");
+        toastr.warning("Please upload an image smaller than 2 MB.");
     }
 });
 
@@ -162,7 +162,7 @@ editProfileForm.addEventListener("submit", async (event) => {
             phone: updatedPhone,
             department: updatedDepartment
         });
-        console.log('Document successfully updated!');
+        toastr.success('Information successfully updated!');
     } catch (error) {
         console.error('Error updating document: ', error);
     }

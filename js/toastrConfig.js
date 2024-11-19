@@ -1,5 +1,4 @@
 export const toastrOptions = {
-    closeButton: true,
     debug: false,
     newestOnTop: true,
     progressBar: true,
