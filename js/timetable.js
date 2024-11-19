@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Check if the file is an Excel file
         if (!file || !file.name.match(/\.(xls|xlsx)$/)) {
-            toastr.alert('Please upload a valid Excel file.');
+            toastr.warning('Please upload a valid Excel file.');
             return;
         }
 
