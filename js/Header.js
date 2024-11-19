@@ -59,7 +59,6 @@ function loadNavBar(userRole) {
     if (userRole === "student-logged-in") {
         navContent = `
             <a href="studentHome.html">Home</a>
-            <a href="#">Class Attendance</a>
             <a href="#">Submit MC</a>
             <a href="subjectEnrol.html">Subject Enrolment</a>
             <a href="Profile.html">Profile</a>
@@ -68,7 +67,7 @@ function loadNavBar(userRole) {
     } else if (userRole === "admin-logged-in") {
         navContent = `
             <a href="subjectApprove.html">Subject Enrolment Review</a>
-            <a href="#">Class Management</a>
+            <a href="timetable.html">Class Schedule Management</a>
             <a href="#">MC Review</a>
             <button class="btn logout">Log Out</button>
         `;
