@@ -1,8 +1,12 @@
 // Import Firebase SDK with consistent versioning
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-auth.js";
-import { getFirestore, writeBatch, doc, setDoc, deleteDoc, getDoc, updateDoc, collection, query, where, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-firestore.js";
-import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-storage.js";
+import { initializeApp } from "firebase/app";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
+import { getFirestore, writeBatch, doc, setDoc, deleteDoc, getDoc, updateDoc, collection, query, where, getDocs, onSnapshot } from "firebase/firestore";
+import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
+import { getDatabase } from "firebase/database";
+
+
+import firebaseServiceAccountKey from '../../privateKey.json';
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -12,8 +16,31 @@ const firebaseConfig = {
     storageBucket: "smartattend-f36c4.appspot.com",
     messagingSenderId: "478728054218",
     appId: "1:478728054218:web:2b69ded405972ea3dadb33"
+    
 };
+//   const admin = require('firebase-admin');
 
+//   admin.initializeApp({
+//     credential: admin.credential.cert(firebaseServiceAccountKey),
+//     projectId: 'smartattend-f36c4',
+//     databaseURL: "https://smartattend-f36c4-default-rtdb.asia-southeast1.firebasedatabase.app"
+//   });
+  
+//   export {admin};
+
+
+import * as firebaseAdmin from 'firebase-admin';
+
+// if (!firebaseAdmin.apps.length) {
+//   firebaseAdmin.initializeApp({
+//     credential: firebaseAdmin.credential.cert(
+//       firebaseServiceAccountKey
+//     ),
+//     databaseURL: 'https://smartattend-f36c4-default-rtdb.asia-southeast1.firebasedatabase.app',
+//   });
+// }
+
+export {firebaseAdmin};
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);

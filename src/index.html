@@ -37,6 +37,8 @@
         import toastr from 'toastr';
         import 'toastr/build/toastr.min.css';
 
+        toastr.options.positionClass = 'toast-bottom-right';
+
         const loginForm = document.getElementById('loginForm');
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
