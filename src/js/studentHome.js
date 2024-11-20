@@ -1,7 +1,8 @@
 import { auth, db, doc, getDoc, collection, getDocs, setDoc } from './FirebaseConfig.js';
-import { toastrOptions } from './toastrConfig.js';
+import toastr from 'toastr';
+import 'toastr/build/toastr.min.css';
 
-toastr.options = toastrOptions;
+toastr.options.positionClass = 'toast-bottom-right'; 
 
 // Fetch approved subjects for logged-in user
 async function fetchApprovedSubjects(uid) {

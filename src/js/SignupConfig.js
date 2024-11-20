@@ -1,7 +1,8 @@
 import { auth, db, setDoc, doc, createUserWithEmailAndPassword, getDocs, collection, query, where } from './FirebaseConfig.js';
-import { toastrOptions } from './toastrConfig.js';
+import toastr from 'toastr';
+import 'toastr/build/toastr.min.css';
 
-toastr.options = toastrOptions;
+toastr.options.positionClass = 'toast-bottom-right'; 
 
 // Function to check if email is a valid @helplive.edu.my email
 function isValidHelpLiveEmail(email) {

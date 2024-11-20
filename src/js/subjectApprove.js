@@ -1,7 +1,7 @@
 import { getFirestore, collection, onSnapshot, doc, updateDoc } from "./FirebaseConfig.js";
-import { toastrOptions } from "./toastrConfig.js";
+import 'toastr/build/toastr.min.css';
 
-toastr.options = toastrOptions;
+toastr.options.positionClass = 'toast-bottom-right'; 
 
 const db = getFirestore();
 
