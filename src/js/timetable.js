@@ -1,8 +1,9 @@
 import readXlsxFile from 'https://cdn.jsdelivr.net/npm/read-excel-file@5.8.6/+esm';
 import { collection, db, doc, getDocs, writeBatch } from './FirebaseConfig.js';
-import { toastrOptions } from './toastrConfig.js';
+import toastr from 'toastr';
+import 'toastr/build/toastr.min.css';
 
-toastr.options = toastrOptions;
+toastr.options.positionClass = 'toast-bottom-right'; 
 
 const subjectCodes = [
     "BIT101", "BIT102", "BIT103", "BIT104", "BIT106", "BIT107", "BIT108", "BIT110",

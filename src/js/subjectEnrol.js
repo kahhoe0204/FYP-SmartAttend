@@ -1,7 +1,8 @@
 import { db, doc, updateDoc, auth, onSnapshot } from './FirebaseConfig.js';
-import { toastrOptions } from './toastrConfig.js';
+import toastr from 'toastr';
+import 'toastr/build/toastr.min.css';
 
-toastr.options = toastrOptions;
+toastr.options.positionClass = 'toast-bottom-right'; 
 
 let uid; 
 
